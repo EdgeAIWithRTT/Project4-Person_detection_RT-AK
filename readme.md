@@ -11,7 +11,7 @@
 整体分为三部分：
 
 1. [模型](#1-模型)
-2. [RT-AK 使用](#2-RT-AK 使用)
+2. [RT-AK 使用](#2-RT-AK-使用)
 3. [板子上的应用层代码实现](#3-应用代码)
 
 硬件平台 ART-Pi, 50M FLOPS。
@@ -30,6 +30,14 @@ $ python inference_yolo-s.py
 - 以下是在 ART-PI 上的模型推理实现：
 
 ![demo](./imgs/demo.gif)
+
+---
+
+我的模型数据：map 21.58%
+
+| Model         | MACC  | Inference | Size |
+| ------------- | ----- | --------- | ----- |
+| yolo-s.tflite | 6.5 M | 50ms      | 144k |
 
 # 1 模型
 

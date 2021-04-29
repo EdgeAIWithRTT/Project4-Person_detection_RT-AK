@@ -10,9 +10,9 @@
 
 整体分为三部分：
 
-1. [模型](#1.-模型)
-2. [RT-AK 使用](#2.-RT-AK 使用)
-3. 板子上的应用层代码实现
+1. [模型](#1-模型)
+2. [RT-AK 使用](#2-RT-AK 使用)
+3. [板子上的应用层代码实现](#3-应用代码)
 
 硬件平台 ART-Pi, 50M FLOPS。
 
@@ -31,7 +31,7 @@ $ python inference_yolo-s.py
 
 ![demo](./imgs/demo.gif)
 
-# 1. 模型
+# 1 模型
 
 ## 1.1 参考项目
 
@@ -147,7 +147,7 @@ $ python inference_yolo-s.py
     python tools/model_converter/post_train_quant_convert.py --keras_model_file ./weights/yolo-s.h5 --annotation_file /home/lebhoryi/Data/VOC/2007_test.txt --model_input_shape 160x160 --sample_num 30 --output_file ./weights/yolo-s.tflite -c
     ```
 
-  # 2. RT-AK 使用
+  # 2 RT-AK 使用
 
 具体使用请查阅 [RT-Thread/RT-AK](https://github.com/RT-Thread/RT-AK) 相关文档
 
@@ -168,7 +168,7 @@ $ cd RT-AK/RT-AK/rt_ai_tools
 $ python aitools.py --model=./yolo-s.h5 --model_name=person_yolo --project=D:\RT-ThreadStudio\workspace\art-pi --platform stm32 --ext_tools="D:\Program Files (x86)\stm32ai-windows-5.2.0\windows" --clear
   ```
 
- # 3. 应用代码
+ # 3 应用代码
 
 > 我的输入是 160x160x1，为了减小模型参数大小，
 

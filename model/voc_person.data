@@ -1,0 +1,6 @@
+classes= 1
+train  = /home/lebhoryi/Data/VOC/train_person.txt
+valid = /home/lebhoryi/Data/VOC/2007_test_person.txt
+names = data/voc_person.names
+backup = /home/lebhoryi/RT-Thread/Detection_API/pd_darknet/Yolo-Fastest/backup/
+

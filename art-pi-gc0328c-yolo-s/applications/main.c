@@ -11,7 +11,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_common.h"
-#define LED_PIN GET_PIN(I, 8)
 #include "drv_spi_ili9488.h"  // spi lcd driver 
 #include <lcd_spi_port.h>  // lcd ports
 #include <rt_ai_person_yolo_model.h>
@@ -21,6 +20,7 @@
 //#include <img5_jpeg_int.h>
 #include <yolo_layer.h>
 
+#define LED_PIN GET_PIN(I, 8)
 
 struct rt_event ov2640_event;
 rt_uint8_t *input_gray;
@@ -35,17 +35,20 @@ void bilinera_interpolation(rt_uint8_t* in_array, short height, short width,
 void ai_camera();
 int main(void)
 {
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
+
     input_gray = rt_malloc(320*240);
     input_gray_160 = rt_malloc(160*160);
     input_buf = rt_malloc(160*160*sizeof(float));
-    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
+    
     /* init spi data notify event */
     rt_event_init(&ov2640_event, "ov2640", RT_IPC_FLAG_FIFO);
     struct drv_lcd_device *lcd;
     lcd = (struct drv_lcd_device *)rt_device_find("lcd");
     struct rt_device_rect_info rect_info = {0, 0, LCD_WIDTH, 240};
     lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
-    rgb2gray(lcd->lcd_info.framebuffer ,input_gray, 320,240);
+    rgb2gray(lcd->lcd_info.framebuffer, input_gray, LCD_WIDTH, 240);
+
     // find ai model handle
     rt_ai_t person_d = NULL;
     person_d = rt_ai_find(RT_AI_PERSON_YOLO_MODEL_NAME);
@@ -130,7 +133,7 @@ void ai_camera()
     ai_flag = 1;
     DCMI_Start();
 }
-MSH_CMD_EXPORT(ai_camera, Start the AI camera to recognize person);
+// MSH_CMD_EXPORT(ai_camera, Start the AI camera to recognize person);
 
 static inline void _itof(float *dst,rt_uint8_t *src, uint32_t size, float div){
     if (div == 0){
@@ -145,8 +148,8 @@ static inline void _itof(float *dst,rt_uint8_t *src, uint32_t size, float div){
 
 // img covnert to gray: Gray = 0.2989*R + 0.5870*G + 0.1140*B
 // better: 4898*R + 9618*G + 1868*B >> 14
-// 8位精度：76*R + 150*G + 30*B >> 8
-void rgb2gray(unsigned char *src,unsigned char *dst, int width,int height)
+// int8: 76*R + 150*G + 30*B >> 8
+void rgb2gray(unsigned char *src, unsigned char *dst, int width, int height)
 {
     int r, g, b;
     for (int i=0; i<width*height; ++i)
@@ -155,9 +158,8 @@ void rgb2gray(unsigned char *src,unsigned char *dst, int width,int height)
         g = *src++; // load green
         b = *src++; // load blue
         // build weighted average:
-        *dst++ = (r * 76 + g * 150 + b * 30) >>8;
+        *dst++ = (r * 76 + g * 150 + b * 30) >> 8;
     }
-//    return true;
 }
 
 int is_in_array(short x, short y, short height, short width)

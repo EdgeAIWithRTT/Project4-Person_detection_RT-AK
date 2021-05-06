@@ -532,7 +532,7 @@ int rt_gc0328c_init(void)
     /* start dcmi capture */
     rt_hw_dcmi_dma_config((rt_uint32_t)JPEG_LINE0_BUF, (rt_uint32_t)JPEG_LINE1_BUF, JPEG_LINE_SIZE);
 
-    rt_kprintf("camera init success!\n");
+    // rt_kprintf("camera init success!\n");
     return RT_EOK;
 }
 //INIT_APP_EXPORT(rt_gc0328c_init);

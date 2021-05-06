@@ -157,6 +157,6 @@ int mount_init(void)
 #endif
     return RT_EOK;
 }
-INIT_APP_EXPORT(mount_init);
+// INIT_APP_EXPORT(mount_init);
 
 #endif /* BSP_USING_FS */

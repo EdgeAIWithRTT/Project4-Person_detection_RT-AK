@@ -39,6 +39,10 @@ $ python inference_yolo-s.py
 | ------------- | ----- | --------- | ----- |
 | yolo-s.tflite | 6.5 M | 50ms      | 144k |
 
+添加NMS效果:
+
+![nms](./imgs/nms.jpg)
+
 # 1 模型
 
 ## 1.1 参考项目

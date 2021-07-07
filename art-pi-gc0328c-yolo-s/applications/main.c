@@ -32,6 +32,7 @@ void rgb2gray(unsigned char *src,unsigned char *dst, int width,int height);
 void bilinera_interpolation(rt_uint8_t* in_array, short height, short width, 
                             rt_uint8_t* out_array, short out_height, short out_width);
 
+yolo_region_layer r1;
 void ai_camera();
 int main(void)
 {
@@ -67,6 +68,7 @@ int main(void)
     // yolo_box
     yolo_box_t boxs = NULL;
     yolo_box_t p  = NULL;
+    yolo_region_layer_init(&r1,125,0.2,1,5);
     int _x1 = 0;
     int _y1 = 0;
     int _x2 = 0;
@@ -90,29 +92,20 @@ int main(void)
             rt_ai_run(person_d,NULL,NULL);
             boxs = (yolo_box_t)rt_ai_output(person_d,0);
             yolo_decode((float*) boxs);
-            
+            do_nms_sort(&r1,boxs);
             p = boxs;
             for(int i=0;i<125;i++){
-                if(boxs[i].class_score*boxs[i].objectness > p->class_score*p->objectness)
-                { 
                     p = &boxs[i] ; 
-
+                    if((p->class_score * p->objectness)>0.2){
+                    _x1 = (int)(p->x*320 - (p->w*320*0.5));  _x1 = _x1>0 ? _x1:1; _x1 = _x1<320 ? _x1:319;  
+                    _y1 = (int)(p->y*240 - (p->h*160*1.5*0.5)); _y1 = _y1>0 ? _y1:1; _y1 = _y1 < 240 ? _y1:239;
+                    _x2 = (int)(p->x*320 + (p->w*320*0.5));        _x2 = _x2>0 ? _x2:1; _x2 = _x2<320 ? _x2:319;
+                    _y2 = (int)(p->y*240 + (p->h*160*1.5*0.5)); _y2 = _y2>0 ? _y2:1; _y2 = _y2 < 240 ? _y2:239;
+                    lcd_draw_rectangle(_x1, _y1, _x2, _y2);
                 }
             }
-//            rt_kprintf("index: %d\n",index);
-//            printf("x,y,w,h,obj,cls:%f,%f,%f,%f,%f,%f \n",p->x,p->y,p->w,p->h,p->objectness,p->class_score);
-            if((p->class_score * p->objectness)>0.2){
-                _x1 = (int)(p->x*320 - (p->w*320*0.5));  _x1 = _x1>0 ? _x1:1; _x1 = _x1<320 ? _x1:319;  
-                _y1 = (int)(p->y*240 - (p->h*160*1.5*0.5)); _y1 = _y1>0 ? _y1:1; _y1 = _y1 < 240 ? _y1:239;
-                _x2 = (int)(p->x*320 + (p->w*320*0.5));        _x2 = _x2>0 ? _x2:1; _x2 = _x2<320 ? _x2:319;
-                _y2 = (int)(p->y*240 + (p->h*160*1.5*0.5)); _y2 = _y2>0 ? _y2:1; _y2 = _y2 < 240 ? _y2:239;
-//                rt_kprintf("_x1,_y1,_x2,_y2 : %d,%d,%d,%d\n",_x1,_y1,_x2,_y2);
-                lcd_draw_rectangle(_x1, _y1, _x2, _y2);
-            }
-            
             DCMI_Start();
-        }
-        
+        }  
     }
     
     return RT_EOK;

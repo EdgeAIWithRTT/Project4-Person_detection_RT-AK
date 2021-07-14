@@ -1,7 +1,7 @@
 #ifndef __YOLO_LAYER_H_
 #define __YOLO_LAYER_H_
 #include <stdint.h>
-typedef struct yolo_box{
+typedef struct _yolo_box{
     float x;
     float y;
     float w;
@@ -10,8 +10,8 @@ typedef struct yolo_box{
     float class_score;
 } yolo_box, *yolo_box_t;
 
-typedef struct sort_box{
-    yolo_box_t box;
+typedef struct _sort_box{
+    yolo_box *box;
     int index;
     int cls;
 } sort_box, *sort_box_t;

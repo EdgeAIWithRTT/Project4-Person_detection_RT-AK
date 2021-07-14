@@ -4,4 +4,4 @@ clean2:
 	-@echo ' '
 
 
-*.elf: $(wildcard D:/EdgeAI/art-pi-gc0328c/board/linker_scripts/STM32H750XBHx/link.lds)
+*.elf: $(wildcard D:/EdgeAI/Project4-Person_detection_RT-AK/art-pi-gc0328c-yolo-s/board/linker_scripts/STM32H750XBHx/link.lds)

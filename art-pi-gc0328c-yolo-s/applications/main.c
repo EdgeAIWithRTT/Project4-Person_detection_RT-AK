@@ -66,8 +66,8 @@ int main(void)
     rt_ai_config(person_d,CFG_OUTPUT_0_ADDR,_out);
     
     // yolo_box
-    yolo_box_t boxs = NULL;
-    yolo_box_t p  = NULL;
+    yolo_box *boxs = NULL;
+    yolo_box *p  = NULL;
     yolo_region_layer_init(&r1,125,0.2,1,5);
     int _x1 = 0;
     int _y1 = 0;
@@ -90,7 +90,7 @@ int main(void)
             bilinera_interpolation(input_gray, 240, 320, input_gray_160, 160, 160);
             _itof(input_buf,input_gray_160, 160*160, 255.0);
             rt_ai_run(person_d,NULL,NULL);
-            boxs = (yolo_box_t)rt_ai_output(person_d,0);
+            boxs = (yolo_box *)rt_ai_output(person_d,0);
             yolo_decode((float*) boxs);
             do_nms_sort(&r1,boxs);
             p = boxs;

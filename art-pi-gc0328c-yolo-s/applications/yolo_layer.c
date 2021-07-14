@@ -69,8 +69,8 @@ void do_nms_sort(yolo_region_layer* region_layer, yolo_box *boxes)
     int classes = region_layer->classes;
     
     int i, j, k;
-    sort_box s[boxes_number];
-
+    sort_box *s = rt_malloc(sizeof(sort_box)*boxes_number);
+    RT_ASSERT(s);
     for (i = 0; i < boxes_number; ++i)
     {
         s[i].index = i;
@@ -97,6 +97,8 @@ void do_nms_sort(yolo_region_layer* region_layer, yolo_box *boxes)
             }
         }
     }
+    rt_free(s);
+
 }
 
 

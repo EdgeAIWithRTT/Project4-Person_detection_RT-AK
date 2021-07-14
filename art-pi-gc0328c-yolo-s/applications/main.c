@@ -27,6 +27,9 @@ rt_uint8_t *input_gray;
 rt_uint8_t *input_gray_160;
 float *input_buf;
 rt_uint8_t ai_flag = 0;
+
+extern void DCMI_Start();
+extern int rt_gc0328c_init();
 static inline void _itof(float *dst,rt_uint8_t *src, uint32_t size, float div);
 void rgb2gray(unsigned char *src,unsigned char *dst, int width,int height);
 void bilinera_interpolation(rt_uint8_t* in_array, short height, short width, 
@@ -34,6 +37,7 @@ void bilinera_interpolation(rt_uint8_t* in_array, short height, short width,
 
 yolo_region_layer r1;
 void ai_camera();
+
 int main(void)
 {
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
@@ -48,7 +52,6 @@ int main(void)
     lcd = (struct drv_lcd_device *)rt_device_find("lcd");
     struct rt_device_rect_info rect_info = {0, 0, LCD_WIDTH, 240};
     lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
-    rgb2gray(lcd->lcd_info.framebuffer, input_gray, LCD_WIDTH, 240);
 
     // find ai model handle
     rt_ai_t person_d = NULL;
@@ -76,20 +79,20 @@ int main(void)
     
     ai_camera();
     while(1){
-            rt_pin_write(LED_PIN, PIN_LOW);
-            rt_event_recv(&ov2640_event,
-                            1,
-                            RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
-                            RT_WAITING_FOREVER,
-                            RT_NULL);
-            rt_pin_write(LED_PIN, PIN_HIGH);
-            lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
+        rt_pin_write(LED_PIN, PIN_LOW);
+        rt_event_recv(&ov2640_event,
+                        1,
+                        RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+                        RT_WAITING_FOREVER,
+                        RT_NULL);
+        rt_pin_write(LED_PIN, PIN_HIGH);
+        lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
         if(ai_flag > 0){
-//            rt_kprintf("ai start");
+        //            rt_kprintf("ai start");
             rgb2gray(lcd->lcd_info.framebuffer ,input_gray, 320,240);
             bilinera_interpolation(input_gray, 240, 320, input_gray_160, 160, 160);
             _itof(input_buf,input_gray_160, 160*160, 255.0);
-            rt_ai_run(person_d,NULL,NULL);
+            rt_ai_run(person_d, NULL, NULL);
             boxs = (yolo_box *)rt_ai_output(person_d,0);
             yolo_decode((float*) boxs);
             do_nms_sort(&r1,boxs);
@@ -99,12 +102,12 @@ int main(void)
                     if((p->class_score * p->objectness)>0.2){
                     _x1 = (int)(p->x*320 - (p->w*320*0.5));  _x1 = _x1>0 ? _x1:1; _x1 = _x1<320 ? _x1:319;  
                     _y1 = (int)(p->y*240 - (p->h*160*1.5*0.5)); _y1 = _y1>0 ? _y1:1; _y1 = _y1 < 240 ? _y1:239;
-                    _x2 = (int)(p->x*320 + (p->w*320*0.5));        _x2 = _x2>0 ? _x2:1; _x2 = _x2<320 ? _x2:319;
+                    _x2 = (int)(p->x*320 + (p->w*320*0.5)); _x2 = _x2>0 ? _x2:1; _x2 = _x2<320 ? _x2:319;
                     _y2 = (int)(p->y*240 + (p->h*160*1.5*0.5)); _y2 = _y2>0 ? _y2:1; _y2 = _y2 < 240 ? _y2:239;
                     lcd_draw_rectangle(_x1, _y1, _x2, _y2);
                 }
             }
-            DCMI_Start();
+        DCMI_Start();
         }  
     }
     

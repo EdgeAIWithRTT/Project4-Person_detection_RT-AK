@@ -7,7 +7,7 @@ static int anchor[5][2]=
 {
   {13, 24}, {33, 42}, {36, 87}, {94, 63}, {68, 118}
 };
-static int num_classes = 1;
+
 static int input_dims[2] ={160,160};
 
 

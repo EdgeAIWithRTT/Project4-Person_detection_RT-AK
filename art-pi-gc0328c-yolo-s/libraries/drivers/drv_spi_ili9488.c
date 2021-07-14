@@ -91,26 +91,26 @@ static rt_err_t lcd_write_data(const rt_uint8_t data)
     }
 }
 
-static rt_err_t lcd_write_half_word(const rt_uint16_t da)
-{
-    rt_size_t len;
-    char data[2] = {0};
-
-    data[0] = da >> 8;
-    data[1] = da;
-
-    rt_pin_write(LCD_DC_PIN, PIN_HIGH);
-    len = rt_spi_send(spi_dev_lcd, data, 2);
-    if (len != 2)
-    {
-        LOG_I("lcd_write_half_word error. %d", len);
-        return -RT_ERROR;
-    }
-    else
-    {
-        return RT_EOK;
-    }
-}
+//static rt_err_t lcd_write_half_word(const rt_uint16_t da)
+//{
+//    rt_size_t len;
+//    char data[2] = {0};
+//
+//    data[0] = da >> 8;
+//    data[1] = da;
+//
+//    rt_pin_write(LCD_DC_PIN, PIN_HIGH);
+//    len = rt_spi_send(spi_dev_lcd, data, 2);
+//    if (len != 2)
+//    {
+//        LOG_I("lcd_write_half_word error. %d", len);
+//        return -RT_ERROR;
+//    }
+//    else
+//    {
+//        return RT_EOK;
+//    }
+//}
 
 static rt_err_t lcd_write_three_bytes(const rt_uint32_t da)
 {

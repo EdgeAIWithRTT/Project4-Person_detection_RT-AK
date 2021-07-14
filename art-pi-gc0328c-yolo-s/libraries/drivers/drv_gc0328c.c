@@ -99,18 +99,18 @@ static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
 #define RANGE_LIMIT(x) (x > 255 ? 255 : (x < 0 ? 0 : x))
 
 /*
-* YUV422�������,UYVY,ת��ΪRGB565,
+* YUV422锟斤拷锟斤拷锟斤拷锟�,UYVY,转锟斤拷为RGB565,
 * inBuf -- YUV data
 * outBuf -- RGB565 data
 * imgWidth,imgHeight -- image width and height
-* cvtMethod -- ��Ч����
+* cvtMethod -- 锟斤拷效锟斤拷锟斤拷
 */
 int convert_uyvy_to_rgb(unsigned char *inBuf, unsigned char *outBuf, int imgWidth, int imgHeight)
 {
-    int rows ,cols; /* ���б�־ */
-    int y, u, v, r, g, b;   /* yuv rgb ��ط��� */
-    unsigned char *YUVdata, *RGBdata;   /* YUV��RGB����ָ�� */
-    int Ypos, Upos, Vpos;   /* Y U V�����ݻ����е�ƫ�� */
+    int rows ,cols; /* 锟斤拷锟叫憋拷志 */
+    int y, u, v, r, g, b;   /* yuv rgb 锟斤拷胤锟斤拷锟� */
+    unsigned char *YUVdata, *RGBdata;   /* YUV锟斤拷RGB锟斤拷锟斤拷指锟斤拷 */
+    int Ypos, Upos, Vpos;   /* Y U V锟斤拷锟斤拷锟捷伙拷锟斤拷锟叫碉拷偏锟斤拷 */
     unsigned int i = 0;
 
     YUVdata = inBuf;
@@ -133,12 +133,12 @@ int convert_uyvy_to_rgb(unsigned char *inBuf, unsigned char *outBuf, int imgWidt
     Vpos = Ypos + 1;
 #endif
 
-    /* ÿ�����������ֽ� */
+    /* 每锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟街斤拷 */
     for(rows = 0; rows < imgHeight; rows++)
     {
         for(cols = 0; cols < imgWidth; cols++)
         {
-            /* �����Ƶ����ٶ� */
+            /* 锟斤拷锟斤拷锟狡碉拷锟斤拷锟劫讹拷 */
             y = YUVdata[Ypos];
             u = YUVdata[Upos] - 128;
             v = YUVdata[Vpos] - 128;
@@ -151,15 +151,15 @@ int convert_uyvy_to_rgb(unsigned char *inBuf, unsigned char *outBuf, int imgWidt
             g = g > 255?255:(g < 0?0:g);
             b = b > 255?255:(b < 0?0:b);
 
-            /* �ӵ͵���r g b */
-            *(RGBdata ++) = (((g & 0x1c) << 3) | (b >> 3)); /* g��5λ��b��5λ */
-            *(RGBdata ++) = ((r & 0xf8) | (g >> 5));    /* r��5λ��g��3λ */
+            /* 锟接低碉拷锟斤拷r g b */
+            *(RGBdata ++) = (((g & 0x1c) << 3) | (b >> 3)); /* g锟斤拷5位锟斤拷b锟斤拷5位 */
+            *(RGBdata ++) = ((r & 0xf8) | (g >> 5));    /* r锟斤拷5位锟斤拷g锟斤拷3位 */
 
-            /* �����ֽ������а���һ��Y */
+            /* 锟斤拷锟斤拷锟街斤拷锟斤拷锟斤拷锟叫帮拷锟斤拷一锟斤拷Y */
             Ypos += 2;
             //Ypos++;
             i++;
-            /* ÿ����Y����һ��UV */
+            /* 每锟斤拷锟斤拷Y锟斤拷锟斤拷一锟斤拷UV */
             if(!(i & 0x01))
             {
                 Upos = Ypos - 1;
@@ -180,7 +180,7 @@ static void rgb565_to_rgb888(rt_uint16_t *rgb565Color, rt_uint8_t *rgb888Color, 
     for (i=0, n=0; i<size; i++, n+=3)
     {
         color = rgb565Color[i];
-        // ��ȡRGB��ɫ��������λ
+        // 锟斤拷取RGB锟斤拷色锟斤拷锟斤拷锟斤拷锟斤拷位
         rgb888Color[n]  = ((color & RGB565_RED)    >> 11) <<3;
         rgb888Color[n+1]  = ((color & RGB565_GREEN)  >> 5) <<2;
         rgb888Color[n+2]    = (color & RGB565_BLUE) <<3;
@@ -323,8 +323,8 @@ static rt_err_t  camera_inf_cfg_gc0328c_fps(rt_uint8_t fps_type)
 void gc0328c_rgb565_mode(void)
 {
     write_reg(i2c_bus, 0xfe, 0x00);
-    write_reg(i2c_bus, 0x49, 0x23);  //�л���С��
-    write_reg(i2c_bus, 0x44, 0x26);  //�л���RGB565���
+    write_reg(i2c_bus, 0x49, 0x23);  //锟叫伙拷锟斤拷小锟斤拷
+    write_reg(i2c_bus, 0x44, 0x26);  //锟叫伙拷锟斤拷RGB565锟斤拷锟�
 }
 
 void camera_dma_data_process(void)
@@ -356,12 +356,10 @@ void camera_dma_data_process(void)
 void camera_frame_data_process(void)
 {
     DCMI_Stop();
-    rt_uint32_t i , j , num = 0 , n = 0;
     rt_uint8_t *pbuf;
     rt_uint8_t *dbuf = _lcd.lcd_info.framebuffer;
-    rt_uint8_t w = 0 , h = 0;
-    rt_uint16_t color;
-    
+    rt_uint32_t i;
+
 //    rt_uint16_t i;
 //    rt_uint8_t *pbuf;
 //    rt_uint8_t *dbuf = _lcd.lcd_info.framebuffer;
@@ -384,6 +382,9 @@ void camera_frame_data_process(void)
     }  
     //convert to 96*96*3
     #if 0 
+    rt_uint32_t j, num = 0, n = 0;
+    rt_uint8_t w = 0 , h = 0;
+    rt_uint16_t color;
     for(j=0 ; j<240 ; j++)
     {
         if(h == 4)
